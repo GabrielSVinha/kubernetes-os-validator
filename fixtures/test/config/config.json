@@ -1,0 +1,10 @@
+{
+    "cloud": {
+        "plugin": "openstack",
+        "properties": {
+            "openstack": {
+                "default_key_name": "mykey"
+            }
+        }
+    }
+}

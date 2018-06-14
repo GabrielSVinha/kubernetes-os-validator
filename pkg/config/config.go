@@ -1,19 +1,28 @@
 package config
 
 import (
+	"encoding/json"
 	"io/ioutil"
-
-	yaml "gopkg.in/yaml.v2"
 )
 
 // Config is a configuration with all parameters to access OS infra
 type Config struct {
-	Cloud Cloud `yaml:"cloud"`
+	Cloud Cloud `json:"cloud"`
 }
 
 // Cloud defines the cloud providers distribution and properties
 type Cloud struct {
-	Plugin string `yaml:"plugin"`
+	Plugin     string     `json:"plugin"`
+	Properties Properties `json:"properties"`
+}
+
+// Properties defines properties of a cloud provider
+type Properties struct {
+	Openstack Openstack `json:"openstack"`
+}
+
+// Openstack defines data from the openstack cloud
+type Openstack struct {
 }
 
 func readConfig(path string) ([]byte, error) {
@@ -28,7 +37,7 @@ func ParseConfig(path string) (*Config, error) {
 		return nil, err
 	}
 
-	err = yaml.Unmarshal(inputConfig, &newConfig)
+	err = json.Unmarshal(inputConfig, &newConfig)
 	if err != nil {
 		return nil, err
 	}
