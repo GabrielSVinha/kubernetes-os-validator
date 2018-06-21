@@ -1,9 +1,10 @@
 package root
 
 import (
-	"fmt"
+	"log"
 	"os"
 
+	"github.com/GabrielSVinha/kubernetes-os-validator/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +15,16 @@ var rootCommand = &cobra.Command{
 	Example: "",
 	Run: func(cmd *cobra.Command, args []string) {
 		configPath := cmd.Flag("config").Value.String()
-		fmt.Println(configPath)
+		conf, err := config.ParseConfig(configPath)
+		if err != nil {
+			log.Fatalln(err)
+			os.Exit(1)
+		}
+		cli, err := conf.GetClient()
+		if err != nil {
+			log.Fatalln(err)
+			os.Exit(1)
+		}
 	},
 }
 

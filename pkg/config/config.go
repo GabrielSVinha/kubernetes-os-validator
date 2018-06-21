@@ -3,6 +3,9 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+
+	"github.com/rackspace/gophercloud"
+	"github.com/rackspace/gophercloud/openstack"
 )
 
 // Config is a configuration with all parameters to access OS infra
@@ -23,6 +26,12 @@ type Properties struct {
 
 // Openstack defines data from the openstack cloud
 type Openstack struct {
+	AuthURL  string `json:"auth_url"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Domain   string `json:"domain"`
+	Project  string `json:"project"`
+	TenantID string `json:"tenant_id"`
 }
 
 func readConfig(path string) ([]byte, error) {
@@ -43,4 +52,15 @@ func ParseConfig(path string) (*Config, error) {
 	}
 
 	return &newConfig, nil
+}
+
+// GetClient return an auth client for openstack
+func (config Config) GetClient() (*gophercloud.ProviderClient, error) {
+	opts := gophercloud.AuthOptions{
+		IdentityEndpoint: config.Cloud.Properties.Openstack.AuthURL,
+		Username:         config.Cloud.Properties.Openstack.Username,
+		Password:         config.Cloud.Properties.Openstack.Password,
+		TenantID:         config.Cloud.Properties.Openstack.TenantID,
+	}
+	return openstack.AuthenticatedClient(opts)
 }
